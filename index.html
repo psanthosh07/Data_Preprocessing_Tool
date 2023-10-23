@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Preprocessing App</title>
+</head>
+<body>
+    <h1>Data Preprocessing App</h1>
+    <form id="dataForm" action="/process_data" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv, .xlsx, .json">
+        <button type="submit">Process Data</button>
+    </form>
+    <div id="result"></div>
+    <div id="plot"></div>
+    
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch('/process_data', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = JSON.stringify(data.processed_data, null, 2);
+                
+                // Display plot image if available
+                if (data.plot_image) {
+                    document.getElementById('plot').innerHTML = '<img src="data:image/png;base64, ' + data.plot_image + '">';
+                } else {
+                    document.getElementById('plot').innerHTML = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
